@@ -13,16 +13,19 @@ public class Game {
     private static final int GOLD_FOR_WIN = 6;
     final List<Player> players = new ArrayList<>();
     private final Questions questions;
+
     int currentPlayer = 0;
     boolean isGettingOutOfPenaltyBox;
 
     public Game() {
+        // Génération des catégories
         Map<String, List<Integer>> categories = new LinkedHashMap<>(); // conserve l'ordre
         categories.put("Rock", List.of());
         categories.put("Pop", List.of(0, 4, 8));
         categories.put("Science", List.of(1, 5, 9));
         categories.put("Sports", List.of(2, 6, 10));
         System.out.println(categories);
+        // Génération des questions
         questions = new Questions(categories, QUESTION_SIZE);
     }
 

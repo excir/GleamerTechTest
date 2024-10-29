@@ -8,7 +8,7 @@ public class Questions {
 
     public Questions(Map<String, List<Integer>> categories, int size) {
         categories.keySet().forEach(c -> {
-            Deque<String> queue = new ArrayDeque<>(size);
+            Deque<String> queue = new ArrayDeque<>(size); // Plus efficace sur l'ajout et la suppression en tete et fin que les linkedlist
             for (int i = 0; i < size; i++) {
                 queue.offer(c + " Question " + i);
             }
