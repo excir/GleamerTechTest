@@ -1,20 +1,19 @@
 package ai.gleamer.ugly;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Game {
     public static final int GAME_BOARD = 12;
+    public static final int PLAYER_LIMIT = 6;
 
-    private static final int PLAYER_LIMIT = 6;
     private static final int QUESTION_SIZE = 50;
     private static final int GOLD_FOR_WIN = 6;
-    final List<Player> players = new ArrayList<>();
     private final Questions questions;
+    private final Board board = new Board();
 
-    int currentPlayer = 0;
+    private Player currentPlayer;
     boolean isGettingOutOfPenaltyBox;
 
     public Game() {
@@ -30,41 +29,38 @@ public class Game {
     }
 
     public boolean isPlayable() {
-        return this.players.size() >= 2;
+        return board.getPlayerCount() >= 2;
     }
 
     public boolean addPlayer(String playerName) {
-        if (players.size() < PLAYER_LIMIT) {
-            players.add(new Player(playerName));
-            System.out.println("There is " + players.size() + " players");
-            return true;
+        boolean addedPlayer = board.addPlayer(playerName);
+        if (currentPlayer == null) {
+            currentPlayer = board.getCurrentPlayer();
         }
-        return false;
+        return addedPlayer;
     }
 
     public void goToNextPlayer() {
-        currentPlayer++;
-        if (currentPlayer >= players.size()) currentPlayer = 0;
+        this.currentPlayer = board.goToNextPlayer();
     }
 
     public boolean roll(int roll) {
-        Player player = players.get(currentPlayer);
-        System.out.println(player.getName() + " is the current player");
+        System.out.println(currentPlayer.getName() + " is the current player");
         System.out.println("They have rolled a " + roll);
 
-        if (player.isInPenaltyBox()) {
+        if (currentPlayer.isInPenaltyBox()) {
             if (roll % 2 != 0) {
                 isGettingOutOfPenaltyBox = true;
-                System.out.println(player.getName() + " is getting out of the penalty box");
-                movePlayer(player, roll);
+                System.out.println(currentPlayer.getName() + " is getting out of the penalty box");
+                movePlayer(currentPlayer, roll);
                 return true;
             } else {
                 isGettingOutOfPenaltyBox = false;
-                System.out.println(player.getName() + " is not getting out of the penalty box");
+                System.out.println(currentPlayer.getName() + " is not getting out of the penalty box");
                 return false;
             }
         } else {
-            movePlayer(player, roll);
+            movePlayer(currentPlayer, roll);
             return true;
         }
     }
@@ -80,21 +76,19 @@ public class Game {
     }
 
     public boolean correctAnswer() {
-        Player player = players.get(currentPlayer);
         System.out.println("Answer was correct!!!!");
-        player.addGoldToPurse();
+        currentPlayer.addGoldToPurse();
 
-        if (player.isInPenaltyBox() && isGettingOutOfPenaltyBox) {
-            player.setInPenaltyBox(false);
+        if (currentPlayer.isInPenaltyBox() && isGettingOutOfPenaltyBox) {
+            currentPlayer.setInPenaltyBox(false);
         }
-        return didPlayerWin(player);
+        return didPlayerWin(currentPlayer);
     }
 
     public void wrongAnswer() {
-        Player player = players.get(currentPlayer);
         System.out.println("Question was incorrectly answered");
-        System.out.println(player.getName() + " was sent to the penalty box");
-        player.setInPenaltyBox(true);
+        System.out.println(currentPlayer.getName() + " was sent to the penalty box");
+        currentPlayer.setInPenaltyBox(true);
     }
 
     private boolean didPlayerWin(Player player) {
@@ -102,7 +96,6 @@ public class Game {
     }
 
     public String getCurrentPlayerName() {
-        Player player = players.get(currentPlayer);
-        return player.getName();
+        return currentPlayer.getName();
     }
 }

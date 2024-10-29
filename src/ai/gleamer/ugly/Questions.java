@@ -3,7 +3,7 @@ package ai.gleamer.ugly;
 import java.util.*;
 
 public class Questions {
-    final Map<String, Deque<String>> questions = new HashMap<>();
+    final Map<String, Queue<String>> questions = new HashMap<>();
     final Map<String, List<Integer>> categories;
 
     public Questions(Map<String, List<Integer>> categories, int size) {
